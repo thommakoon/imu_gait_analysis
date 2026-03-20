@@ -42,39 +42,47 @@ def plot_acc_gyr(df, columns, title, save_fig_path):
     sns.set_context("paper", font_scale=1.8)
 
     plot_df = df[columns].copy()
+    fig, ax = plt.subplots(figsize=(15, 5))
     if 'timestamp' in plot_df.columns:
-        plot_df.set_index('timestamp', drop=True, inplace=True)  # use timestamp as x axis
-        plot_df.plot(figsize=(15, 5))
-            # color=[plt.cm.winter_r(0), plt.cm.winter_r(100), plt.cm.winter_r(200)])  # cmap=plt.cm.winter_r)
-        plt.xlabel('Time (s)')
-    # plt.ylim(-10, 10)
+        x = plot_df['timestamp'].to_numpy()
+        y_columns = [col for col in plot_df.columns if col != 'timestamp']
+        for col in y_columns:
+            ax.plot(x, plot_df[col].to_numpy(), label=col)
+        ax.set_xlabel('Time (s)')
+        plot_values = plot_df[y_columns]
     else:
-        plot_df.plot(figsize=(15, 5))
-            # color=[plt.cm.winter_r(0), plt.cm.winter_r(100), plt.cm.winter_r(200)])  # cmap=plt.cm.winter_r)
-        plt.xlabel('Samples')
+        x = np.arange(len(plot_df))
+        y_columns = list(plot_df.columns)
+        for col in y_columns:
+            ax.plot(x, plot_df[col].to_numpy(), label=col)
+        ax.set_xlabel('Samples')
+        plot_values = plot_df
 
     if 'Acc' in title:
-        plt.ylabel('Acceleration (g)')
-        acc_mag = np.linalg.norm(plot_df.values, axis=-1)
-        plt.title(title + '\n Acc_mag = ' +
-                  '{:.2f}'.format(round(np.mean(acc_mag), 2)) + '    '
-                                                                'num. samples = ' + str(len(plot_df.index)))
+        ax.set_ylabel('Acceleration (g)')
+        acc_mag = np.linalg.norm(plot_values.values, axis=-1)
+        ax.set_title(title + '\n Acc_mag = ' +
+                     '{:.2f}'.format(round(np.mean(acc_mag), 2)) + '    '
+                     'num. samples = ' + str(len(plot_df.index)))
         # print('acc mag: ' + str(np.mean(acc_mag)))
         print('num. acc samples = ' + str(len(plot_df.index)))
     elif 'Gyr' in title:
-        plt.ylabel('Angular Velocity (Degrees/s)')
-        gyro_mag = np.linalg.norm(plot_df.values, axis=-1)
-        plt.title(title + '\n Gyro_mag = ' +
-                  '{:.2f}'.format(round(np.mean(gyro_mag), 2)) + '    '
-                                                                 'num. samples = ' + str(len(plot_df.index)))
+        ax.set_ylabel('Angular Velocity (Degrees/s)')
+        gyro_mag = np.linalg.norm(plot_values.values, axis=-1)
+        ax.set_title(title + '\n Gyro_mag = ' +
+                     '{:.2f}'.format(round(np.mean(gyro_mag), 2)) + '    '
+                     'num. samples = ' + str(len(plot_df.index)))
         # print('gyro mag: ' + str(np.mean(gyro_mag)))
         print('num. gyro samples = ' + str(len(plot_df.index)) + '\n')
     else:
-        plt.ylabel('Data')
+        ax.set_ylabel('Data')
+
+    ax.legend()
 
     if not os.path.exists(save_fig_path):
         os.makedirs(save_fig_path)
     plt.savefig(os.path.join(save_fig_path, str(title + '.png')), bbox_inches='tight')
+    plt.close(fig)
     # plt.show()
 
 

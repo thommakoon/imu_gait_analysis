@@ -11,8 +11,9 @@ from data_reader.DataLoader import DataLoader
 #### PARAMS START ####
 dataset = "data_charite"
 load_raw = True   # load (and plot) raw IMU data into interim data
-get_stance_threshold = False   # determine stance threshold
-get_initial_contact = False    # determine IMU initial contact
+get_stance_threshold = True  # determine stance threshold
+get_initial_contact = True  # determine IMU initial contact
+cut_data = False  # set True only when you explicitly want timestamp cropping
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -78,16 +79,17 @@ elif dataset == "data_charite":
         # "imu0006",
         # "imu0007",
         # "imu0008",
-        "imu0009",
+        # "imu0009",
         # # "imu0010",  # only has visit 1
         # "imu0011",
         # "imu0012",
         # "imu0013",
         # # "imu0014",  # only has visit 1
+        "imu_thom_2026_03_20"
     ]
     runs = [
-        # "visit1",
-        "visit2",
+        "visit1",
+        # "visit2",
     ]
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
@@ -118,7 +120,9 @@ if load_raw:
                     # df_loc = data_loader.load_kiel_data()
                     df_loc = data_loader.load_xsens_data()
                     # df_loc = data_loader.load_GaitUp_data()
-                    df_loc = data_loader.cut_data(2583, 2890, by_timestamp=True)  # (if necessary: segment data)
+                    if cut_data:
+                        # Only use this when you know a valid timestamp window for the current run.
+                        df_loc = data_loader.cut_data(2583, 2890, by_timestamp=True)
                     data_loader.save_data(save_folder_path)  # save re-formatted data into /interim folder
 
                 # df_loc = df_loc.dropna()

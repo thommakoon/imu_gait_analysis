@@ -21,7 +21,7 @@ if dataset == "data_charite":
         "imu0009",
         "imu0011",
         "imu0012",
-        "imu0013",
+        # "imu0013",
     ]
     runs = ["visit1", "visit2"]
     run_name = "visit"

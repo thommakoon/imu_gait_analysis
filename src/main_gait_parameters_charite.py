@@ -35,7 +35,7 @@ processed_base_path = os.path.join(data_base_path, "processed")
 ## PARAMS END ###
 
 ### Execute the Gait Analysis Pipeline ###
-# pipeline_playground.execute(sub_list, runs, dataset, data_base_path)
+pipeline_playground.execute(sub_list, runs, dataset, data_base_path)
 
 ### Mark outliers strides (turning intervals, interrupted strides) ###
 mark_processed_data(runs, sub_list, processed_base_path, interim_base_path)
