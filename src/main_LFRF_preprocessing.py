@@ -85,7 +85,7 @@ elif dataset == "data_charite":
         # "imu0012",
         # "imu0013",
         # # "imu0014",  # only has visit 1
-        "imu_thom_2026_03_20"
+        "imu_thom_2026_04_07"
     ]
     runs = [
         "visit1",

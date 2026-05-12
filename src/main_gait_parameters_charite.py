@@ -9,22 +9,23 @@ from features import aggregate_gait_parameters
 
 ### PARAMS START ###
 sub_list = [
-    "imu0001",
-    "imu0002",
-    "imu0003",
-    "imu0006",
-    "imu0007",
-    "imu0008",
-    "imu0009",
+    # "imu0001",
+    # "imu0002",
+    # "imu0003",
+    # "imu0006",
+    # "imu0007",
+    # "imu0008",
+    # "imu0009",
     # "imu0010",   # only has visit 1
-    "imu0011",
-    "imu0012",
+    # "imu0011",
+    # "imu0012",
     # "imu0013",    # need to adjust thresholds in pipeline_playground.py and gait_parameters.py
     # "imu0014",   # only has visit 1
+    "imu_thom_2026_04_07",
 ]
 runs = [
     "visit1",
-    "visit2",
+    # "visit2",
 ]
 dataset = "data_charite"
 with open(os.path.join(os.path.dirname(__file__), "..", "path.json")) as f:

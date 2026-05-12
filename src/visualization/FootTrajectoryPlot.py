@@ -23,7 +23,7 @@ class FootTrajectoryPlot:
         self.runs = runs
         self.label_paretic_side = label_paretic_side  # whether to use parectic or left/right label for the plots
 
-        with open("path.json") as f:
+        with open(os.path.join(os.path.dirname(__file__), '..', '..', 'path.json')) as f:
             paths = json.loads(f.read())
         self.data_base_path = paths[dataset]
 

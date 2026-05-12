@@ -23,7 +23,7 @@ from data_reader.DataLoader import DataLoader
 from scipy.signal import find_peaks, peak_prominences
 
 from LFRF_parameters.pipeline.abstract_pipeline_components import AbstractReferenceLoader
-from src.data_reader.zebris_json_reader import ZebrisJsonReader
+from data_reader.zebris_json_reader import ZebrisJsonReader
 
 
 class ZebrisReferenceLoader(AbstractReferenceLoader):
