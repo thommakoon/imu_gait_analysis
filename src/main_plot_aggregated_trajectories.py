@@ -24,9 +24,9 @@ if dataset == "data_charite":
         # "imu0011",
         # "imu0012",
         # "imu0013",
-        "imu_thom_2026_04_07",
+        "imu_thom_2026_06_06",
     ]
-    runs = ["visit1"]
+    runs = ["visit3km", "visit5km", "visit7km"]
     run_name = "visit"
 
 if dataset == "data_kiel":  # healthy elderly controls

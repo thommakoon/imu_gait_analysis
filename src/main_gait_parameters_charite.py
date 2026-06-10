@@ -21,11 +21,12 @@ sub_list = [
     # "imu0012",
     # "imu0013",    # need to adjust thresholds in pipeline_playground.py and gait_parameters.py
     # "imu0014",   # only has visit 1
-    "imu_thom_2026_04_07",
+    "imu_thom_2026_06_06",
 ]
 runs = [
-    "visit1",
-    # "visit2",
+    "visit3km",
+    "visit5km",
+    "visit7km",
 ]
 dataset = "data_charite"
 with open(os.path.join(os.path.dirname(__file__), "..", "path.json")) as f:
