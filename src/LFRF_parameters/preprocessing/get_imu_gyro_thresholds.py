@@ -4,7 +4,6 @@ Slider for gyro stance threshold
 ===========
 
 """
-from curses import raw
 import sys,os
 print(os.getcwd())
 sys.path.append(os.getcwd())

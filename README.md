@@ -13,15 +13,22 @@ git clone https://github.com/Linn39/imu_gait_analysis.git
 ```
 
 ### Setting up the Environment
-Once you have the project on your local machine, you can set up the Conda environment using the `requirements.txt` file. 
+Once you have the project on your local machine, you can set up a virtual environment with `uv` and install the project requirements from `requirements.txt`.
 ```bash
-conda create --name myenv --file requirements.txt python=3.9
-conda activate myenv
+uv venv --python 3.9
+source .venv/bin/activate
+uv pip install -r requirements.txt
 ```
 
-Replace `myenv` with the name you want to give to your environment.
+On Windows (PowerShell), activate the environment with:
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
-Alternatively, you can use pip to install the project requirements.
+To verify the Python environment:
+```bash
+python test_environment.py
+```
 
 
 ## Calculate spatio-temporal gait parameters

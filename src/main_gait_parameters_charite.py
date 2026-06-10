@@ -9,22 +9,24 @@ from features import aggregate_gait_parameters
 
 ### PARAMS START ###
 sub_list = [
-    "imu0001",
-    "imu0002",
-    "imu0003",
-    "imu0006",
-    "imu0007",
-    "imu0008",
-    "imu0009",
+    # "imu0001",
+    # "imu0002",
+    # "imu0003",
+    # "imu0006",
+    # "imu0007",
+    # "imu0008",
+    # "imu0009",
     # "imu0010",   # only has visit 1
-    "imu0011",
-    "imu0012",
+    # "imu0011",
+    # "imu0012",
     # "imu0013",    # need to adjust thresholds in pipeline_playground.py and gait_parameters.py
     # "imu0014",   # only has visit 1
+    "imu_thom_2026_06_06",
 ]
 runs = [
-    "visit1",
-    "visit2",
+    "visit3km",
+    "visit5km",
+    "visit7km",
 ]
 dataset = "data_charite"
 with open(os.path.join(os.path.dirname(__file__), "..", "path.json")) as f:
@@ -35,7 +37,7 @@ processed_base_path = os.path.join(data_base_path, "processed")
 ## PARAMS END ###
 
 ### Execute the Gait Analysis Pipeline ###
-# pipeline_playground.execute(sub_list, runs, dataset, data_base_path)
+pipeline_playground.execute(sub_list, runs, dataset, data_base_path)
 
 ### Mark outliers strides (turning intervals, interrupted strides) ###
 mark_processed_data(runs, sub_list, processed_base_path, interim_base_path)

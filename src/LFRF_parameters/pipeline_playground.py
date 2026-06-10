@@ -59,7 +59,7 @@ def execute(sub_list, runs, dataset, data_base_path):
             "location_kws": ["LF", "RF"],
             "data_loader": PhysilogDataLoader,
             "trajectory_estimator": TuncaTrajectoryEstimator,
-            "sampling_rate": 120,
+            "sampling_rate": 200,
             "gait_event_detector": TuncaEventDetector,
             "prominence_search_threshold": 0.7,  # 0.7 for normal walking, 0.3 for severly impaired walking
             "prominence_ic": 0.01,

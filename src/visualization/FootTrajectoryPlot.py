@@ -23,7 +23,7 @@ class FootTrajectoryPlot:
         self.runs = runs
         self.label_paretic_side = label_paretic_side  # whether to use parectic or left/right label for the plots
 
-        with open("path.json") as f:
+        with open(os.path.join(os.path.dirname(__file__), '..', '..', 'path.json')) as f:
             paths = json.loads(f.read())
         self.data_base_path = paths[dataset]
 
@@ -46,7 +46,7 @@ class FootTrajectoryPlot:
     def plot_aggregated_trajectories(self, beautify):
         fs = None  # sampling rate
         if self.dataset == "data_charite":
-            fs = 120
+            fs = 200
         elif self.dataset == "data_kiel":
             fs = 200
 
@@ -355,12 +355,24 @@ class FootTrajectoryPlot:
                         linewidth=4,
                         label=f"Average {foot[2]} foot",  # , speed = {round(np.mean(stride_speeds[f"{foot[0]}_{run}"]), 2)} m/s',
                     )
-                    plt.xlabel("Distance (m)")
-                    plt.ylabel("Height (m)")
-                    plt.title(title)
-                    plt.legend()
-                    # plt.show()
-                    plt.close()
+                plt.xlabel("Distance (m)")
+                plt.ylabel("Height (m)")
+                plt.title(title)
+                plt.legend()
+                sideview_dir = os.path.join(
+                    self.data_base_path,
+                    "processed",
+                    "figures_trajectory_sideview",
+                )
+                os.makedirs(sideview_dir, exist_ok=True)
+                fig_feet.savefig(
+                    os.path.join(
+                        sideview_dir,
+                        f"trajectory_sideview_{self.subject}_{run}_dot_product_{self.figure_suffix}.pdf",
+                    ),
+                    bbox_inches="tight",
+                )
+                plt.close(fig_feet)
 
             else:
                 print(f"No trajectories for {self.dataset} {self.subject} {run} found.")

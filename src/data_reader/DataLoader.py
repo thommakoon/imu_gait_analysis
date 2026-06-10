@@ -175,9 +175,14 @@ class DataLoader:
         self.data_df["timestamp"] = (
             self.data_df["timestamp"] * 1e-6
         )  # convert time from microsecond to second
-        self.data_df["GyrX"] = self.data_df["GyrX"] * (
-            -1
-        )  # invert gyro Y axis for gait event detection
+        # convert gyro from rad/s to deg/s (for imu_thom_2026_04_07 data which outputs rad/s)
+        self.data_df["GyrX"] = self.data_df["GyrX"] * 180 / np.pi
+        self.data_df["GyrY"] = self.data_df["GyrY"] * 180 / np.pi
+        self.data_df["GyrZ"] = self.data_df["GyrZ"] * 180 / np.pi
+        # self.data_df["GyrX"] = self.data_df["GyrX"] * (
+        #     -1
+        # )  # invert gyro Y axis for gait event detection
+        self.data_df["GyrX"] = self.data_df["GyrX"] * (-1)  # invert gyro Y axis for gait event detection
         self.data_df["AccX"] = self.data_df["AccX"] / 9.8 * (-1)
         self.data_df["AccY"] = self.data_df["AccY"] / 9.8
         self.data_df["AccZ"] = self.data_df["AccZ"] / 9.8

@@ -2,7 +2,7 @@ import json
 import os
 import pandas as pd
 import matplotlib
-# matplotlib.use("WebAgg")
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from LFRF_parameters.preprocessing.plot_raw_xyz import plot_acc_gyr
 from LFRF_parameters.preprocessing.get_imu_gyro_thresholds import AccPlot, GyroPlot
@@ -11,8 +11,9 @@ from data_reader.DataLoader import DataLoader
 #### PARAMS START ####
 dataset = "data_charite"
 load_raw = True   # load (and plot) raw IMU data into interim data
-get_stance_threshold = False   # determine stance threshold
-get_initial_contact = False    # determine IMU initial contact
+get_stance_threshold = False  # determine stance threshold (interactive)
+get_initial_contact = False  # determine IMU initial contact (interactive)
+cut_data = False  # set True only when you explicitly want timestamp cropping
 
 if dataset == "data_kiel":
     # kiel dataset
@@ -78,16 +79,18 @@ elif dataset == "data_charite":
         # "imu0006",
         # "imu0007",
         # "imu0008",
-        "imu0009",
+        # "imu0009",
         # # "imu0010",  # only has visit 1
         # "imu0011",
         # "imu0012",
         # "imu0013",
         # # "imu0014",  # only has visit 1
+        "imu_thom_2026_06_06"
     ]
     runs = [
-        # "visit1",
-        "visit2",
+        "visit3km",
+        "visit5km",
+        "visit7km",
     ]
 
 with open(os.path.join(os.path.dirname(__file__), '..', 'path.json')) as f:
@@ -118,7 +121,9 @@ if load_raw:
                     # df_loc = data_loader.load_kiel_data()
                     df_loc = data_loader.load_xsens_data()
                     # df_loc = data_loader.load_GaitUp_data()
-                    df_loc = data_loader.cut_data(2583, 2890, by_timestamp=True)  # (if necessary: segment data)
+                    if cut_data:
+                        # Only use this when you know a valid timestamp window for the current run.
+                        df_loc = data_loader.cut_data(2583, 2890, by_timestamp=True)
                     data_loader.save_data(save_folder_path)  # save re-formatted data into /interim folder
 
                 # df_loc = df_loc.dropna()
@@ -131,7 +136,7 @@ if load_raw:
                     plot_acc_gyr(df_loc, ['timestamp', 'AccX', 'AccY', 'AccZ'], 'raw_Acc_' + loc, save_folder_path)  
                     plot_acc_gyr(df_loc, ['timestamp', 'GyrX', 'GyrY', 'GyrZ'], 'raw_Gyr_' + loc, save_folder_path)
 
-            plt.show()
+            plt.close('all')
 
 
 #### get gyro stance threshold ####

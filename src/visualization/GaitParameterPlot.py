@@ -125,16 +125,29 @@ class GaitParameterPlot:
             dataframe: dataframe containing gait features from control subjects
         """
         # concatenate data from all subjects and use subjecct alias "all_controls"
-        ref_data = pd.read_csv(
-            os.path.join(
-                self.data_base_path,
-                "..",
-                "data_kiel",
-                "processed",
-                "features_no_abs_SI",
-                "across_sessions_all.csv",
-            )
+        # Edit: keep original path logic commented; add graceful fallback when control dataset is unavailable.
+        # ref_data = pd.read_csv(
+        #     os.path.join(
+        #         self.data_base_path,
+        #         "..",
+        #         "data_kiel",
+        #         "processed",
+        #         "features_no_abs_SI",
+        #         "across_sessions_all.csv",
+        #     )
+        # )
+        ref_path = os.path.join(
+            self.data_base_path,
+            "..",
+            "data_kiel",
+            "processed",
+            "features_no_abs_SI",
+            "across_sessions_all.csv",
         )
+        if not os.path.exists(ref_path):
+            return None
+
+        ref_data = pd.read_csv(ref_path)
         ref_data["sub"] = "all_controls"
         ref_data = ref_data[ref_data["treadmill_speed"] == "treadmill_speed2"].copy()
         # ref_data.drop("treadmill_speed", axis=1, inplace=True)
@@ -340,10 +353,15 @@ class GaitParameterPlot:
                 columns=across_sessions_df.loc[self.run_name]
             ).drop(index=[self.run_name, "sub"])
 
-        # add reference data from control subjects at the end of the dataframe
-        plot_df["healthy_controls"] = pd.concat(
-            [plot_df, self.load_all_ref_subs()], axis=1
-        )[0]
+        # Edit: keep original behavior commented; add fallback if healthy control file is missing.
+        # plot_df["healthy_controls"] = pd.concat(
+        #     [plot_df, self.load_all_ref_subs()], axis=1
+        # )[0]
+        # add reference data from control subjects; if unavailable, fall back to first run
+        ref_controls = self.load_all_ref_subs()
+        use_healthy_controls = ref_controls is not None
+        if use_healthy_controls:
+            plot_df["healthy_controls"] = pd.concat([plot_df, ref_controls], axis=1)[0]
 
         # add data from the left and right foot
         for foot in ["left", "right"]:
@@ -361,10 +379,12 @@ class GaitParameterPlot:
                 index=[self.run_name, "sub"]
             )
 
-            # add reference data from control subjects at the end of the dataframe
-            foot_df["healthy_controls"] = pd.concat(
-                [foot_df, self.load_all_ref_subs()], axis=1
-            )[0]
+            # Edit: keep original behavior commented; only add when controls are available.
+            # foot_df["healthy_controls"] = pd.concat(
+            #     [foot_df, self.load_all_ref_subs()], axis=1
+            # )[0]
+            if use_healthy_controls:
+                foot_df["healthy_controls"] = pd.concat([foot_df, ref_controls], axis=1)[0]
 
             # add foot name in all gait parameter names
             foot_df.set_index(foot_df.index.astype(str) + f"_{foot}", inplace=True)
@@ -384,11 +404,22 @@ class GaitParameterPlot:
         #     0
         # ]  # Get the first column name that ends with "1"
 
-        run_cols_df_norm = run_cols_df.apply(
-            # lambda x: x / x[run_col_1], axis=1    # normalize by run 1
-            lambda x: x / x["healthy_controls"],
-            axis=1,  # normalize by healthy controls
-        )  # normalize by the column
+        # Edit: keep original normalization commented; fallback to first run if controls not found.
+        # run_cols_df_norm = run_cols_df.apply(
+        #     lambda x: x / x["healthy_controls"],
+        #     axis=1,
+        # )
+        if use_healthy_controls:
+            run_cols_df_norm = run_cols_df.apply(
+                lambda x: x / x["healthy_controls"],
+                axis=1,  # normalize by healthy controls
+            )
+        else:
+            run_col_1 = run_cols_df.columns[run_cols_df.columns.str.endswith("1")][0]
+            run_cols_df_norm = run_cols_df.apply(
+                lambda x: x / x[run_col_1],
+                axis=1,  # normalize by first run
+            )
         run_cols_df_norm.columns = [
             col + "_norm" for col in run_cols_df.columns
         ]  # # Rename columns with "_norm" suffix
@@ -449,7 +480,11 @@ class GaitParameterPlot:
                 if "avg" in feature_subset[1]:  # normalize average values
                     runs_plot = subset_plot_df.filter(regex="norm$", axis=1)
                     # subtitle_suffix = f"(normalized by {self.run_name} 1)"  # normalize by run 1
-                    subtitle_suffix = f"(normalized by healthy controls)"  # normalize by healthy controls
+                    subtitle_suffix = (
+                        "(normalized by healthy controls)"
+                        if use_healthy_controls
+                        else f"(normalized by {self.run_name} 1)"
+                    )
 
                 else:  # do not normalize SI and CV, take the original values
                     runs_plot = subset_plot_df.loc[:, run_cols_df.columns.values].copy()
