@@ -86,17 +86,14 @@ class Pipeline:
         #     self.config["runs"][run_num],
         # ).get_data()
 
-        imu_ic = float(
-            self.imu_ic_timestamps[
-                np.logical_and(
-                    self.imu_ic_timestamps["subject"]
-                    == self.config["subjects"][subject_num],
-                    self.imu_ic_timestamps["run"] == self.config["runs"][run_num],
-                )
-            ][
-                "imu_initial_contact_right"
-            ]  # ic_time
-        )
+        ic_rows = self.imu_ic_timestamps[
+            np.logical_and(
+                self.imu_ic_timestamps["subject"]
+                == self.config["subjects"][subject_num],
+                self.imu_ic_timestamps["run"] == self.config["runs"][run_num],
+            )
+        ]
+        imu_ic = float(ic_rows["imu_initial_contact_right"].iloc[0])
 
         # # crop imu data to fit experiment_duration seconds from inititial contact
         # # start 2 seconds earlyer to get also lift-off data before initial contact

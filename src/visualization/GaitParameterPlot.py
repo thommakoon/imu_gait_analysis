@@ -390,7 +390,7 @@ class GaitParameterPlot:
             foot_df.set_index(foot_df.index.astype(str) + f"_{foot}", inplace=True)
 
             # append data from the left and right foot
-            plot_df = plot_df.append(foot_df, ignore_index=False)
+            plot_df = pd.concat([plot_df, foot_df], ignore_index=False)
 
         plot_df.reset_index(
             inplace=True
@@ -415,7 +415,7 @@ class GaitParameterPlot:
                 axis=1,  # normalize by healthy controls
             )
         else:
-            run_col_1 = run_cols_df.columns[run_cols_df.columns.str.endswith("1")][0]
+            run_col_1 = run_cols_df.columns[0]
             run_cols_df_norm = run_cols_df.apply(
                 lambda x: x / x[run_col_1],
                 axis=1,  # normalize by first run
@@ -567,16 +567,17 @@ class GaitParameterPlot:
         plt.legend(loc="upper right", bbox_to_anchor=(-0.1, 1.6), borderaxespad=0.0)
 
         if save_fig:
-            plt.savefig(
-                os.path.join(
-                    self.data_base_path,
-                    "processed",
-                    "figures_radar_plot",
-                    f"radar_plot_healthy_speed2_{title_suffix}_{sub}.pdf",
-                )
+            out_path = os.path.join(
+                self.data_base_path,
+                "processed",
+                "figures_radar_plot",
+                f"radar_plot_healthy_speed2_{title_suffix}_{sub}.pdf",
             )
-
-        # plt.show()
+            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            plt.savefig(out_path)
+            plt.close(fig)
+        else:
+            plt.show()
 
     def boxplot_windows(self, sub, gait_parameter, save_fig):
         """Make boxplot for windowed strides, visualize the data distribution in all windows
@@ -691,10 +692,8 @@ class GaitParameterPlot:
                 )
         plt.xlabel("Time [s]")
         plt.title(
-            f"Boxplot of strides for Sub {sub} {gait_parameter}\n \
-            Total num. of valid strides:"
-            + f" visit1 = {sub_all_strides_df[sub_all_strides_df['visit'] == 'visit1'].shape[0]},"
-            + f" visit2 = {sub_all_strides_df[sub_all_strides_df['visit'] == 'visit2'].shape[0]}"
+            f"Strides for Sub {sub} — {gait_parameter}\n"
+            f"Valid strides: {self.count_num_per_run(sub_all_strides_df)}"
         )
         plt.legend()
         if save_fig:
@@ -706,8 +705,9 @@ class GaitParameterPlot:
                     f"{gait_parameter}_scatter_plot_{sub}_drop-2-stride-interval.png",
                 )
             )
-
-        plt.show()
+            plt.close(fig)
+        else:
+            plt.show()
 
     def plot_LR_diff(self, sub, gait_parameter, save_fig):
         # plot differences between left and right feet from windows and across entire session
